@@ -10,7 +10,9 @@
         <p style="color: red;"><?php echo session()->getFlashdata('error'); ?></p>
     <?php endif; ?>
 
-    <form action="/login" method="post">
+    <a href="/login/operateur">Côté Opérateur</a>
+
+    <form action="/login/client" method="post">
         <?= csrf_field() ?>
 
         <label for="telephone">Username:</label>

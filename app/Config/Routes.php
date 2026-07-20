@@ -17,3 +17,8 @@ use App\Controllers\EtudiantController;
 // $routes->get('/userdashboard','UsersController::userdashboard', ['filter'=> 'role:user']);
 
 $routes->get('/', 'ClientsController::index');
+
+$routes->group('login', function ($routes) {
+    $routes->post('client', 'ClientsController::loginClient');
+    $routes->get('operateur', 'OperateursController::loginOperateur');
+});
