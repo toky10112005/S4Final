@@ -1,11 +1,6 @@
-## Répartition des tâches (binôme, via GitHub)
-
-Le piège classique en binôme, c'est de couper "toi le back, moi le front" ou "toi opérateur, moi client" **sans avoir défini le socle commun d'abord** — ça crée des conflits de merge et des incohérences de modèle de données. Voici une répartition qui évite ça :
-
-### Étape 0 — À faire ENSEMBLE avant de vous séparer (30-60 min)
-- Définir ensemble le schéma de données (les tables/entités : Client, Compte, Opérateur, Préfixe, TypeOperation, Bareme/Tranche, Transaction/Historique)
-- Créer le repo GitHub, la structure de dossiers, un fichier `README.md` avec les règles (branche `main` protégée, chaque feature dans sa branche, pull request avant de merger)
-- Se mettre d'accord sur la stack technique
+### À faire ENSEMBLE 
+- Définir ensemble le schéma de données (les tables/entités)
+- Créer le repo GitHub, la structure de dossiers
 
 ### Répartition des taches 
 
@@ -19,6 +14,6 @@ Le piège classique en binôme, c'est de couper "toi le back, moi le front" ou "
 **Personne B — "Client & Transactions"**
 - Login automatique par numéro de téléphone (création de compte à la volée)
 - Écran solde
-- Dépôt / Retrait / Transfert (ces écrans **appellent** la fonction de calcul de frais faite par Personne A — d'où l'intérêt de définir cette interface ensemble à l'étape 0)
+- Dépot / Retrait / Transfert (ces écrans appellent la fonction de calcul de frais faite par Personne A — d'où l'intérêt de définir cette interface ensemble à l'étape 0)
 - Écran historique des opérations
 

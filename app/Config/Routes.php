@@ -10,8 +10,8 @@ use App\Controllers\EtudiantController;
 $routes->get('/', 'ClientsController::index');
 
 $routes->group('login', function ($routes) {
-    $routes->post('client', 'ClientsController::index');
-    $routes->get('operateur', 'OperateurController::index');
+    $routes->post('client', 'ClientsController::loginClient');
+    $routes->get('operateur', 'OperateursController::loginOperateur');
     $routes->post('operateur', 'OperateurController::loginOperateur');
 });
 
@@ -23,3 +23,15 @@ $routes->group('operateur', ['filter' => 'role:operateur'], function ($routes) {
     $routes->get('baremes', 'BaremeFraisController::list_barem');
 });
 
+//     
+//     
+// });
+
+// Client area
+$routes->group('client', function($routes){
+    $routes->get('dashboard', 'ClientsController::dashboard');
+    $routes->post('deposit', 'ClientsController::deposit');
+    $routes->post('withdraw', 'ClientsController::withdraw');
+    $routes->post('transfer', 'ClientsController::transfer');
+    $routes->get('logout', 'ClientsController::logout');
+});
