@@ -6,14 +6,42 @@
     <title>Liste des Préfixes</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
+        :root {
+            --bg: #0f172a;
+            --card: #111827;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --accent: #22c55e;
+            --border: rgba(255,255,255,.08);
+        }
         body {
-            background: #f4f7fb;
+            margin: 0;
+            min-height: 100vh;
             font-family: Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(34,197,94,.20), transparent 28%),
+                radial-gradient(circle at top right, rgba(56,189,248,.16), transparent 26%),
+                linear-gradient(180deg, #0b1020 0%, #0f172a 100%);
+            color: var(--text);
+            padding: 24px 0;
         }
         .card-shadow {
+            background: rgba(17,24,39,.86);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: 0 18px 40px rgba(0,0,0,.28);
+            color: var(--text);
+        }
+        .form-control {
+            background: rgba(15,23,42,.88);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #16a34a);
             border: 0;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+            color: #04110a;
+            font-weight: 700;
         }
     </style>
 </head>
