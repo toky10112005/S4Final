@@ -6,12 +6,28 @@ use App\Controllers\EtudiantController;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'UsersController::index');
-$routes->post('/login', 'UsersController::login');
-$routes->get('/inscription', 'UsersController::RedirectInscription');
-$routes->post('/inscription', 'UsersController::inscription');
+// $routes->get('/', 'UsersController::index');
+// $routes->post('/login', 'UsersController::login');
+// $routes->get('/inscription', 'UsersController::RedirectInscription');
+// $routes->post('/inscription', 'UsersController::inscription');
 
-$routes->get('/logout', 'UsersController::logout');
+// $routes->get('/logout', 'UsersController::logout');
 
-$routes->get('/admindashboard','UsersController::admindashboard', ['filter'=> 'role:admin']);
-$routes->get('/userdashboard','UsersController::userdashboard', ['filter'=> 'role:user']);
+// $routes->get('/admindashboard','UsersController::admindashboard', ['filter'=> 'role:admin']);
+// $routes->get('/userdashboard','UsersController::userdashboard', ['filter'=> 'role:user']);
+
+$routes->get('/', 'ClientsController::index');
+
+$routes->group('login', function ($routes) {
+    $routes->post('client', 'ClientsController::loginClient');
+    $routes->get('operateur', 'OperateursController::loginOperateur');
+});
+
+// Client area
+$routes->group('client', function($routes){
+    $routes->get('dashboard', 'ClientsController::dashboard');
+    $routes->post('deposit', 'ClientsController::deposit');
+    $routes->post('withdraw', 'ClientsController::withdraw');
+    $routes->post('transfer', 'ClientsController::transfer');
+    $routes->get('logout', 'ClientsController::logout');
+});
