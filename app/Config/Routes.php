@@ -22,3 +22,12 @@ $routes->group('login', function ($routes) {
     $routes->post('client', 'ClientsController::loginClient');
     $routes->get('operateur', 'OperateursController::loginOperateur');
 });
+
+// Client area
+$routes->group('client', function($routes){
+    $routes->get('dashboard', 'ClientsController::dashboard');
+    $routes->post('deposit', 'ClientsController::deposit');
+    $routes->post('withdraw', 'ClientsController::withdraw');
+    $routes->post('transfer', 'ClientsController::transfer');
+    $routes->get('logout', 'ClientsController::logout');
+});
