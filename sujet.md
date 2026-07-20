@@ -1,7 +1,4 @@
-## Le sujet, en clair
-
-Vous devez créer un système qui **imite le fonctionnement d'un opérateur de mobile money** (comme Mvola, Orange Money, Airtel Money...). Il y a deux "utilisateurs" différents du système :
-
+## Version 1
 **1. L'opérateur** (l'administrateur du système) — celui qui gère les règles du jeu :
 - Il définit quels préfixes téléphoniques (033, 037...) appartiennent à son réseau
 - Il définit les types d'opérations possibles (dépôt, retrait, transfert) et **combien ça coûte** selon le montant (c'est le tableau que vous avez montré : plus tu retires/transfères une grosse somme, plus les frais sont élevés, par tranche)
@@ -16,4 +13,16 @@ Vous devez créer un système qui **imite le fonctionnement d'un opérateur de m
 - Il peut transférer de l'argent à un autre numéro (les frais du barème s'appliquent aussi)
 - Il peut consulter l'historique de ses opérations
 
-En résumé : c'est un **portefeuille électronique** avec une logique de frais configurable par l'opérateur, et deux interfaces (une pour gérer les règles/voir les statistiques, une pour que le client utilise son compte).
+
+## Version 2
+**Coté opérateur**
+    • Configuration des préfixes valable pour les autres opérateurs (ex: 032 et 031, …)
+    • Configuration % en plus de commissions pour les transferts vers les autres opérateurs 
+    • Sur la page “Situation gain via les différents frais” , séparer opérateur et autres opérateurs
+    • Situation des montants à envoyer à chaque opérateur
+
+**Coté client**
+    • Option inclure frais de retrait lors de l’envoi
+        ◦ il n’y a pas de frais de retrait pour les autres opérateurs
+    • Envoi multiple vers plusieurs numéros ( divisé le montant pour chaque numéro)
+        ◦ même opérateur uniquement

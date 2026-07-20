@@ -38,15 +38,20 @@
                 </form>
             </div>
             <div class="card" style="background:rgba(255,255,255,.03); grid-column: 1 / -1;">
-                <h3>Transfert</h3>
+                <h3>Transfert simple ou multiple</h3>
                 <form method="post" action="/client/transfer">
                     <?= csrf_field() ?>
-                    <label>Téléphone destinataire
-                        <input type="text" name="telephone_to" required>
+                    <label>Téléphone(s) destinataire(s)
+                        <textarea name="beneficiaires" rows="4" placeholder="0341234567\n0347654321" required></textarea>
                     </label>
                     <label>Montant
                         <input type="number" name="amount" step="100" min="0" required>
                     </label>
+                    <label style="display:flex;gap:10px;align-items:center;">
+                        <input type="checkbox" name="include_withdraw_fee" value="1">
+                        <span>Inclure les frais de retrait lors de l’envoi</span>
+                    </label>
+                    <p class="muted">Si plusieurs numéros sont saisis, le montant total est divisé automatiquement entre eux. Cette option fonctionne uniquement pour les numéros du même opérateur.</p>
                     <button type="submit">Transférer</button>
                 </form>
             </div>
