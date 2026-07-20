@@ -59,10 +59,17 @@
 
                 <h5 class="mb-3">Ajouter un préfixe</h5>
                 <form method="post" action="/operateur/prefixes/ajouter" class="row g-2 mb-4">
-                    <div class="col-md-8">
-                        <input type="text" id="prefixe" name="prefixe" class="form-control" required>
+                    <div class="col-md-5">
+                        <input type="text" id="prefixe" name="prefixe" class="form-control" placeholder="Ex: 032" required>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-5">
+                        <select name="id_operateur" class="form-control">
+                            <?php foreach ($operateurs as $operateur): ?>
+                                <option value="<?= esc($operateur['id']) ?>"><?= esc($operateur['nom']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
                         <button type="submit" class="btn btn-primary w-100">Ajouter</button>
                     </div>
                 </form>
@@ -70,8 +77,11 @@
                 <ul class="list-group">
                     <?php foreach ($prefixes as $prefix): ?>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span><?= esc($prefix['prefixe']) ?></span>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="supprimerPrefixe('<?= esc($prefix['prefixe']) ?>')">Supprimer</button>
+                            <div>
+                                <strong><?= esc($prefix['prefixe']) ?></strong>
+                                <div class="small text-muted"><?= esc($prefix['operateur_nom'] ?? 'Non attribué') ?></div>
+                            </div>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="supprimerPrefixe('<?= esc($prefix['id']) ?>')">Supprimer</button>
                         </li>
                     <?php endforeach; ?>
                 </ul>
@@ -80,9 +90,9 @@
     </div>
 
     <script>
-        function supprimerPrefixe(prefixe) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer le préfixe ' + prefixe + ' ?')) {
-                window.location.href = '/operateur/prefixes/supprimer/' + encodeURIComponent(prefixe);
+        function supprimerPrefixe(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce préfixe ?')) {
+                window.location.href = '/operateur/prefixes/supprimer/' + encodeURIComponent(id);
             }
         }
     </script>

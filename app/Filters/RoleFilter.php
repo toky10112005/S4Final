@@ -10,10 +10,13 @@ class RoleFilter implements FilterInterface
     public function before(RequestInterface $request, $arguments = null)
     {
         $session = session();
-        $user = $session->get('Client') ?? $session->get('user') ?? $session->get('client');
+        $user = $session->get('Client')
+            ?? $session->get('client')
+            ?? $session->get('user')
+            ?? $session->get('operateur');
 
         if (!$user) {
-            return redirect()->to('/')->with('erreur', 'Accès refusé : droits insuffisants');
+            return redirect()->to('/login/operateur')->with('erreur', 'Accès refusé : droits insuffisants');
         }
 
         $roles = is_array($arguments) ? $arguments : [];
@@ -21,9 +24,15 @@ class RoleFilter implements FilterInterface
             $roles = ['operateur'];
         }
 
-        $userRole = is_array($user) ? ($user['role'] ?? null) : null;
+        $userRole = null;
+        if (is_array($user)) {
+            $userRole = $user['role'] ?? null;
+        } elseif (is_object($user)) {
+            $userRole = $user->role ?? null;
+        }
+
         if ($userRole === null || !in_array($userRole, $roles, true)) {
-            return redirect()->to('/')->with('erreur', 'Accès refusé : droits insuffisants');
+            return redirect()->to('/login/operateur')->with('erreur', 'Accès refusé : droits insuffisants');
         }
 
         return null;

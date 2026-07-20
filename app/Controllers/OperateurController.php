@@ -37,12 +37,16 @@ class OperateurController extends BaseController
 
                 $gainretrais=$this->operateurModel->getgainsretrait();
                 $gainstransfert=$this->operateurModel->getgainstransfert();
-
-
+                $gainsInterne = $this->operateurModel->getGainsInterne();
+                $gainsAutresOperateurs = $this->operateurModel->getGainsAutresOperateurs();
+                $compensationOperateurs = $this->operateurModel->getCompensationOperateurs();
 
             return view('/operateur/dashboard',[
                 'gainretrais'=>$gainretrais,
-                'gainstransfert'=>$gainstransfert
+                'gainstransfert'=>$gainstransfert,
+                'gainsInterne'=>$gainsInterne,
+                'gainsAutresOperateurs'=>$gainsAutresOperateurs,
+                'compensationOperateurs'=>$compensationOperateurs
             ]);
         } else {
             

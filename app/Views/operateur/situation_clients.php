@@ -25,19 +25,27 @@
             color: var(--text);
             padding: 24px 0;
         }
+        .container { max-width: 1100px; }
         .card {
-            background: rgba(17,24,39,.86);
+            background: rgba(17,24,39,.88);
             border: 1px solid var(--border);
-            border-radius: 20px;
+            border-radius: 22px;
             box-shadow: 0 18px 40px rgba(0,0,0,.28);
             color: var(--text);
+            backdrop-filter: blur(8px);
         }
-        .table {
-            color: var(--text);
-        }
+        .table { color: var(--text); }
         .table-dark {
             --bs-table-bg: rgba(255,255,255,.05);
             color: var(--text);
+        }
+        .btn-outline-primary {
+            border-color: #38bdf8;
+            color: #38bdf8;
+        }
+        .btn-outline-primary:hover {
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+            color: #02131d;
         }
     </style>
 </head>
@@ -45,32 +53,37 @@
     <div class="container py-4">
         <div class="card shadow-sm">
             <div class="card-body">
-                <h2 class="mb-4">Situation des comptes clients</h2>
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+                    <h2 class="mb-0">Situation des comptes clients</h2>
+                    <a href="/operateur" class="btn btn-outline-primary btn-sm">Retour au tableau de bord</a>
+                </div>
 
-                <table class="table table-striped table-bordered align-middle">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID Client</th>
-                            <th>Téléphone</th>
-                            <th>Solde (Ar)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (!empty($comptes)): ?>
-                            <?php foreach ($comptes as $c): ?>
-                                <tr>
-                                    <td><?= esc($c['client_id']) ?></td>
-                                    <td><?= esc($c['telephone']) ?></td>
-                                    <td><?= number_format($c['solde'], 2, ',', ' ') ?> Ar</td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered align-middle">
+                        <thead class="table-dark">
                             <tr>
-                                <td colspan="3" class="text-center">Aucun client trouvé.</td>
+                                <th>ID Client</th>
+                                <th>Téléphone</th>
+                                <th>Solde (Ar)</th>
                             </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($comptes)): ?>
+                                <?php foreach ($comptes as $c): ?>
+                                    <tr>
+                                        <td><?= esc($c['client_id']) ?></td>
+                                        <td><?= esc($c['telephone']) ?></td>
+                                        <td><?= number_format($c['solde'], 2, ',', ' ') ?> Ar</td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="3" class="text-center">Aucun client trouvé.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
 
                 <div class="d-flex justify-content-center mt-3">
                     <?= $pager->links() ?>

@@ -28,16 +28,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 24px;
+        }
+        .auth-wrap {
+            width: min(100%, 460px);
         }
         .auth-card {
-            background: rgba(17,24,39,.86);
+            background: rgba(17,24,39,.88);
             border: 1px solid var(--border);
-            border-radius: 18px;
+            border-radius: 22px;
             box-shadow: 0 18px 40px rgba(0,0,0,.28);
             color: var(--text);
+            backdrop-filter: blur(8px);
         }
         .form-control {
-            background: rgba(15,23,42,.88);
+            background: rgba(15,23,42,.9);
             border: 1px solid var(--border);
             color: var(--text);
         }
@@ -47,16 +52,21 @@
             color: #04110a;
             font-weight: 700;
         }
+        .muted { color: var(--muted); }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-5">
+            <div class="col-md-6">
                 <div class="card auth-card">
-                    <div class="card-body p-4">
-                        <h2 class="text-center mb-4">Connexion opérateur</h2>
-                        <form action="operateur" method="post">
+                    <div class="card-body p-4 p-md-5">
+                        <h2 class="text-center mb-2">Connexion opérateur</h2>
+                        <p class="text-center muted mb-4">Accédez au tableau de bord et aux outils de gestion.</p>
+                        <?php if (session()->getFlashdata('error')): ?>
+                            <div class="alert alert-danger py-2"><?= esc(session()->getFlashdata('error')) ?></div>
+                        <?php endif; ?>
+                        <form action="/login/operateur" method="post">
                             <?= csrf_field() ?>
 
                             <div class="mb-3">

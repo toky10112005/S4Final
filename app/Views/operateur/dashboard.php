@@ -26,15 +26,14 @@
             color: var(--text);
             padding: 24px 0;
         }
-        .container {
-            max-width: 1100px;
-        }
+        .container { max-width: 1200px; }
         .card-shadow {
-            background: rgba(17,24,39,.86);
+            background: rgba(17,24,39,.88);
             border: 1px solid var(--border);
-            border-radius: 20px;
+            border-radius: 22px;
             box-shadow: 0 18px 40px rgba(0,0,0,.28);
             color: var(--text);
+            backdrop-filter: blur(8px);
         }
         .btn-outline-primary {
             border-color: var(--accent-2);
@@ -44,11 +43,19 @@
             background: linear-gradient(135deg, var(--accent-2), #0ea5e9);
             color: #02131d;
         }
+        .table { color: var(--text); }
+        .table-dark {
+            --bs-table-bg: rgba(255,255,255,.05);
+            color: var(--text);
+        }
     </style>
 </head>
 <body>
     <div class="container py-4">
-        <h1 class="mb-4">Tableau de bord opérateur</h1>
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+            <h1 class="mb-0">Tableau de bord opérateur</h1>
+            <a href="/login/operateur" class="btn btn-outline-primary btn-sm">Se déconnecter</a>
+        </div>
 
         <div class="d-flex flex-wrap gap-2 mb-4">
             <a href="/operateur/prefixes" class="btn btn-outline-primary">Configuration des Préfixes</a>
@@ -61,7 +68,7 @@
                 <div class="card card-shadow h-100">
                     <div class="card-body">
                         <h5 class="card-title">Situation gain (retrait)</h5>
-                        <p class="card-text">Total gains : <?= $gainretrais['total_gains'] ?? 0 ?></p>
+                        <p class="card-text">Total gains : <?= number_format($gainretrais['total_gains'] ?? 0, 2, ',', ' ') ?> Ar</p>
                     </div>
                 </div>
             </div>
@@ -69,9 +76,66 @@
                 <div class="card card-shadow h-100">
                     <div class="card-body">
                         <h5 class="card-title">Situation gain (transfert)</h5>
-                        <p class="card-text">Total gains : <?= $gainstransfert['total_gains'] ?? 0 ?></p>
+                        <p class="card-text">Total gains : <?= number_format($gainstransfert['total_gains'] ?? 0, 2, ',', ' ') ?> Ar</p>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="row g-3 mt-1">
+            <div class="col-md-6">
+                <div class="card card-shadow h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Gains réseau propre</h5>
+                        <p class="card-text">Frais de base : <?= number_format($gainsInterne['total_gains_frais_base'] ?? 0, 2, ',', ' ') ?> Ar</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card card-shadow h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Gains via autres opérateurs</h5>
+                        <?php if (!empty($gainsAutresOperateurs)): ?>
+                            <ul class="mb-0 ps-3">
+                                <?php foreach ($gainsAutresOperateurs as $item): ?>
+                                    <li><?= esc($item['operateur']) ?> : <?= number_format($item['total_gains'] ?? 0, 2, ',', ' ') ?> Ar</li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            <p class="card-text mb-0">Aucune donnée disponible.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-shadow mt-3">
+            <div class="card-body">
+                <h5 class="card-title">Montants à envoyer à chaque opérateur</h5>
+                <?php if (!empty($compensationOperateurs)): ?>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Opérateur</th>
+                                    <th>Transactions</th>
+                                    <th>Montant à reverser</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($compensationOperateurs as $item): ?>
+                                    <tr>
+                                        <td><?= esc($item['operateur_nom']) ?></td>
+                                        <td><?= esc($item['nombre_transactions']) ?></td>
+                                        <td><?= number_format($item['montant_total_a_reverser'] ?? 0, 2, ',', ' ') ?> Ar</td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php else: ?>
+                    <p class="mb-0">Aucune compensation à afficher.</p>
+                <?php endif; ?>
             </div>
         </div>
     </div>
