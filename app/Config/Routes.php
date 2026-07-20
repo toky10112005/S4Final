@@ -11,7 +11,7 @@ $routes->get('/', 'ClientsController::index');
 
 $routes->group('login', function ($routes) {
     $routes->post('client', 'ClientsController::loginClient');
-    $routes->get('operateur', 'OperateursController::loginOperateur');
+    $routes->get('operateur', 'OperateurController::index');
     $routes->post('operateur', 'OperateurController::loginOperateur');
 });
 

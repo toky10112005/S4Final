@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 ## Version 1
+=======
+>>>>>>> origin
 **1. L'opérateur** (l'administrateur du système) — celui qui gère les règles du jeu :
 - Il définit quels préfixes téléphoniques (033, 037...) appartiennent à son réseau
 - Il définit les types d'opérations possibles (dépôt, retrait, transfert) et **combien ça coûte** selon le montant (c'est le tableau que vous avez montré : plus tu retires/transfères une grosse somme, plus les frais sont élevés, par tranche)
@@ -13,16 +16,19 @@
 - Il peut transférer de l'argent à un autre numéro (les frais du barème s'appliquent aussi)
 - Il peut consulter l'historique de ses opérations
 
+## Version 2
+Coté opérateur
+Configuration des préfixes valable pour les autres opérateurs (ex: 032 et 031, …)
+Configuration % en plus de commissions pour les transferts vers les autres opérateurs 
+Sur la page “Situation gain via les différents frais” , séparer opérateur et autres opérateurs
+Situation des montants à envoyer à chaque opérateur
 
-## Version 2
-**Coté opérateur**
-    • Configuration des préfixes valable pour les autres opérateurs (ex: 032 et 031, …)
-    • Configuration % en plus de commissions pour les transferts vers les autres opérateurs 
-    • Sur la page “Situation gain via les différents frais” , séparer opérateur et autres opérateurs
-    • Situation des montants à envoyer à chaque opérateur
+# Coté client
+Option inclure frais de retrait lors de l’envoi
+il n’y a pas de frais de retrait pour les autres opérateurs
+Envoi multiple vers plusieurs numéros ( divisé le montant pour chaque numéro)
+même opérateur uniquement
 
-**Coté client**
-    • Option inclure frais de retrait lors de l’envoi
-        ◦ il n’y a pas de frais de retrait pour les autres opérateurs
-    • Envoi multiple vers plusieurs numéros ( divisé le montant pour chaque numéro)
-        ◦ même opérateur uniquement
+
+
+

@@ -36,10 +36,18 @@ $active = $active ?? '';
             min-height: 100vh;
         }
         a { color: inherit; text-decoration: none; }
-        .shell { max-width: 1200px; margin: 0 auto; padding: 24px; }
+        .shell {
+            max-width: 1200px;
+            width: min(1200px, calc(100% - 24px));
+            margin: 0 auto;
+            padding: 20px 0 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
         .topbar {
             display: flex; justify-content: space-between; align-items: center; gap: 16px;
-            padding: 18px 22px; background: rgba(17,24,39,.78); border: 1px solid var(--border);
+            padding: 16px 18px; background: rgba(17,24,39,.78); border: 1px solid var(--border);
             border-radius: 22px; box-shadow: var(--shadow); backdrop-filter: blur(10px);
             position: sticky; top: 16px; z-index: 10;
         }
@@ -53,16 +61,16 @@ $active = $active ?? '';
         }
         .nav a.active, .nav a:hover { background: linear-gradient(135deg, var(--accent), #16a34a); color: #04110a; }
         .hero {
-            margin: 26px 0 18px; padding: 28px; border-radius: 28px;
+            margin: 0; padding: 24px 24px 22px; border-radius: 24px;
             background: linear-gradient(135deg, rgba(34,197,94,.18), rgba(56,189,248,.12));
             border: 1px solid rgba(255,255,255,.08); box-shadow: var(--shadow);
         }
         .hero h1 { margin: 0 0 10px; font-size: clamp(1.5rem, 4vw, 2.8rem); }
         .hero p { margin: 0; color: var(--text); opacity: .92; max-width: 900px; line-height: 1.6; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; align-items: start; }
         .card {
-            background: rgba(17,24,39,.85); border: 1px solid var(--border); border-radius: 24px;
-            padding: 22px; box-shadow: var(--shadow);
+            background: rgba(17,24,39,.85); border: 1px solid var(--border); border-radius: 22px;
+            padding: 20px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px;
         }
         .card h2, .card h3 { margin-top: 0; }
         .muted { color: var(--muted); }
@@ -96,15 +104,27 @@ $active = $active ?? '';
         button:hover { transform: translateY(-1px); filter: brightness(1.03); }
         .secondary-btn { background: linear-gradient(135deg, var(--accent-2), #0ea5e9); color: #02131d; }
         .danger-btn { background: linear-gradient(135deg, #fb7185, #ef4444); color: #1f0a0a; }
-        .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+        .actions { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .actions a { width: 100%; text-align: center; }
         .table-wrap { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 12px 10px; border-bottom: 1px solid var(--border); text-align: left; }
         th { color: #cbd5e1; font-weight: 700; background: rgba(255,255,255,.03); }
         tr:hover td { background: rgba(255,255,255,.02); }
         .footer { color: var(--muted); text-align: center; padding: 18px 0 4px; font-size: .95rem; }
-        .split { display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; }
-        @media (max-width: 900px) { .topbar, .split { grid-template-columns: 1fr; display: grid; } }
+        .split { display: grid; grid-template-columns: 1.1fr .9fr; gap: 16px; align-items: start; }
+        @media (max-width: 900px) {
+            .topbar, .split { grid-template-columns: 1fr; display: grid; }
+            .nav { width: 100%; }
+            .nav a { flex: 1 1 calc(50% - 8px); text-align: center; }
+        }
+        @media (max-width: 720px) {
+            .shell { width: min(100%, calc(100% - 16px)); padding: 12px 0 18px; }
+            .topbar { padding: 14px; }
+            .hero { padding: 18px; }
+            .card { padding: 16px; }
+            .stats { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>

@@ -107,6 +107,9 @@ INSERT INTO transactions (id_type_operation, id_expediteur, id_destinataire, id_
 (3, 1, 2, 3, 2000, 50, 60),                            -- Transfert vers Airtel (2000 Ar, Frais base=50, Comm 3%=60)
 (3, 1, 3, 2, 3000, 50, 150);                           -- Transfert vers Orange (3000 Ar, Frais base=50, Comm 5%=150)
 
+--------------------------------------------------------------------------------
+-- 📊 VUES POUR LA VERSION 2
+--------------------------------------------------------------------------------
 
 -- A. Calcul du Solde des Clients (Tient compte de montant + frais + commission)
 CREATE VIEW v_solde_clients AS
