@@ -56,6 +56,52 @@ class ClientsController extends BaseController
         return $client;
     }
 
+    protected function getClientBalance(int $clientId): float
+    {
+        $db = \Config\Database::connect();
+
+        try {
+            $viewQuery = $db->query('SELECT solde FROM v_solde_clients WHERE client_id = ?', [$clientId]);
+            $viewRow = $viewQuery->getRowArray();
+            if ($viewRow && isset($viewRow['solde'])) {
+                return floatval($viewRow['solde']);
+            }
+        } catch (\Throwable $e) {
+            // Fall back to direct calculation if the balance view is missing or invalid.
+        }
+
+        $depositId = $this->feeCalculator->getOperationId('depot');
+        $withdrawId = $this->feeCalculator->getOperationId('retrait');
+        $transferId = $this->feeCalculator->getOperationId('transfert');
+
+        $sql = <<<SQL
+SELECT
+    COALESCE(SUM(CASE
+        WHEN id_type_operation = ? THEN montant
+        ELSE 0
+    END), 0)
+    + COALESCE(SUM(CASE
+        WHEN id_type_operation = ? AND id_destinataire = ? THEN montant
+        ELSE 0
+    END), 0)
+    - COALESCE(SUM(CASE
+        WHEN id_type_operation = ? AND id_expediteur = ? THEN montant + frais
+        ELSE 0
+    END), 0)
+    - COALESCE(SUM(CASE
+        WHEN id_type_operation = ? AND id_expediteur = ? THEN montant + frais
+        ELSE 0
+    END), 0) AS balance
+FROM transactions
+WHERE (id_expediteur = ? OR id_destinataire = ?)
+SQL;
+
+        $row = $db->query($sql, [$depositId, $transferId, $clientId, $withdrawId, $clientId, $transferId, $clientId, $clientId, $clientId])->getRowArray();
+        $balance = $row && isset($row['balance']) ? floatval($row['balance']) : 0.0;
+
+        return $balance;
+    }
+
     public function dashboard()
     {
         $client = session()->get('client');
@@ -63,11 +109,7 @@ class ClientsController extends BaseController
             return redirect()->to('/')->with('error', 'Veuillez vous connecter');
         }
 
-        // Get balance from view v_solde_clients if present, fallback to calculation
-        $db = \Config\Database::connect();
-        $query = $db->query('SELECT solde FROM v_solde_clients WHERE client_id = ?', [$client['id']]);
-        $row = $query->getRowArray();
-        $solde = $row ? $row['solde'] : 0;
+        $solde = $this->getClientBalance($client['id']);
 
         // Recent history (sent or received)
         $history = $this->transactionsModel->getClientHistory($client['id']);
@@ -91,7 +133,7 @@ class ClientsController extends BaseController
 
         // Deposits have type 1 and no fees
         $this->transactionsModel->insert([
-            'id_type_operation' => 1,
+            'id_type_operation' => $this->feeCalculator->getOperationId('depot'),
             'id_expediteur' => $client['id'],
             'id_destinataire' => null,
             'montant' => $amount,
@@ -109,20 +151,18 @@ class ClientsController extends BaseController
         $amount = floatval($this->request->getPost('amount'));
         if ($amount <= 0) return redirect()->back()->with('error', 'Montant invalide');
 
-        $fee = $this->feeCalculator->getFee(2, $amount);
+        $operationId = $this->feeCalculator->getOperationId('retrait');
+        $fee = $this->feeCalculator->getFeeByName('retrait', $amount);
 
         // Check balance
-        $db = \Config\Database::connect();
-        $query = $db->query('SELECT solde FROM v_solde_clients WHERE client_id = ?', [$client['id']]);
-        $row = $query->getRowArray();
-        $solde = $row ? $row['solde'] : 0;
+        $solde = $this->getClientBalance($client['id']);
 
         if ($solde < ($amount + $fee)) {
             return redirect()->back()->with('error', 'Solde insuffisant');
         }
 
         $this->transactionsModel->insert([
-            'id_type_operation' => 2,
+            'id_type_operation' => $operationId,
             'id_expediteur' => $client['id'],
             'id_destinataire' => null,
             'montant' => $amount,
@@ -151,20 +191,18 @@ class ClientsController extends BaseController
             $recipientId = $recipient['id'];
         }
 
-        $fee = $this->feeCalculator->getFee(3, $amount);
+        $operationId = $this->feeCalculator->getOperationId('transfert');
+        $fee = $this->feeCalculator->getFeeByName('transfert', $amount);
 
         // Check balance
-        $db = \Config\Database::connect();
-        $query = $db->query('SELECT solde FROM v_solde_clients WHERE client_id = ?', [$client['id']]);
-        $row = $query->getRowArray();
-        $solde = $row ? $row['solde'] : 0;
+        $solde = $this->getClientBalance($client['id']);
 
         if ($solde < ($amount + $fee)) {
             return redirect()->back()->with('error', 'Solde insuffisant');
         }
 
         $this->transactionsModel->insert([
-            'id_type_operation' => 3,
+            'id_type_operation' => $operationId,
             'id_expediteur' => $client['id'],
             'id_destinataire' => $recipientId,
             'montant' => $amount,

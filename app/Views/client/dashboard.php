@@ -22,7 +22,7 @@
                 <form method="post" action="/client/deposit">
                     <?= csrf_field() ?>
                     <label>Montant
-                        <input type="number" name="amount" step="0.01" required>
+                        <input type="number" name="amount" step="100" min="0" required>
                     </label>
                     <button type="submit">Déposer</button>
                 </form>
@@ -32,7 +32,7 @@
                 <form method="post" action="/client/withdraw">
                     <?= csrf_field() ?>
                     <label>Montant
-                        <input type="number" name="amount" step="0.01" required>
+                        <input type="number" name="amount" step="100" min="0" required>
                     </label>
                     <button type="submit">Retirer</button>
                 </form>
@@ -45,7 +45,7 @@
                         <input type="text" name="telephone_to" required>
                     </label>
                     <label>Montant
-                        <input type="number" name="amount" step="0.01" required>
+                        <input type="number" name="amount" step="100" min="0" required>
                     </label>
                     <button type="submit">Transférer</button>
                 </form>
@@ -83,8 +83,7 @@
         <?php endif; ?>
 
         <div class="actions" style="margin-top:16px;">
-            <a href="/" class="secondary-btn" style="padding:12px 14px;border-radius:14px;display:inline-block;">Changer de numéro</a>
-            <a href="/client/logout" class="danger-btn" style="padding:12px 14px;border-radius:14px;display:inline-block;">Déconnexion</a>
+            <a href="/client/logout" class="danger-btn" style="padding:12px 14px;border-radius:14px;display:inline-block;">Changer de numéro</a>
         </div>
     </aside>
 </div>
