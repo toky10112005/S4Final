@@ -11,6 +11,7 @@ class Filters extends BaseConfig
         'csrf' => \CodeIgniter\Filters\CSRF::class,
         'auth' => AuthFilter::class,
         'role' => RoleFilter::class,
+        'operateur' => RoleFilter::class,
     ];
     // Filtres globaux (toutes les routes)
     public array $globals = [
