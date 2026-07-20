@@ -17,6 +17,8 @@ $routes->group('login', function ($routes) {
 
 $routes->group('operateur', ['filter' => 'role:operateur'], function ($routes) {
     $routes->get('prefixes', 'PrefixesController::list_prefixes');
+    $routes->get('/prefixes/supprimer/(:num)', 'PrefixesController::supprimer/$1');
+    $routes->get('/prefixes/ajouter', 'PrefixesController::ajouter');
     $routes->get('situations', 'OperateurController::situationComptes');
     $routes->get('baremes', 'BaremeFraisController::list_barem');
 });
