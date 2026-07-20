@@ -1,6 +1,3 @@
-DROP TABLE IF EXISTS S4Final;
-
-
 CREATE TABLE prefixes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     prefixe VARCHAR(10) NOT NULL UNIQUE
@@ -11,6 +8,11 @@ CREATE TABLE type_operations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nom VARCHAR(50) NOT NULL UNIQUE -- 'depot', 'retrait', 'transfert'
 );
+
+INSERT OR IGNORE INTO type_operations (nom) VALUES
+('depot'),
+('retrait'),
+('transfert');
 
 CREATE TABLE bareme_frais (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -90,6 +92,32 @@ INSERT INTO bareme_frais (id_type_operation, montant_min, montant_max, frais) VA
 (3, 250001, 500000, 1500),
 (3, 500001, 1000000, 2500),
 (3, 1000001, 2000000, 3000);
+DELETE FROM bareme_frais
+WHERE id_type_operation IN (
+    SELECT id FROM type_operations WHERE nom IN ('retrait', 'transfert')
+);
+
+INSERT INTO bareme_frais (id_type_operation, montant_min, montant_max, frais)
+SELECT (SELECT id FROM type_operations WHERE nom = 'retrait'), 100, 1000, 50
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'retrait'), 1001, 5000, 50
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'retrait'), 5001, 10000, 100
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'retrait'), 10001, 25000, 200
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'retrait'), 25001, 50000, 400
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'retrait'), 50001, 100000, 800
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'retrait'), 10001, 250000, 1500
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'retrait'), 250001, 500000, 1500
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'retrait'), 500001, 1000000, 2500
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'retrait'), 1000001, 2000000, 3000
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'transfert'), 100, 1000, 50
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'transfert'), 1001, 5000, 50
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'transfert'), 5001, 10000, 100
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'transfert'), 10001, 25000, 200
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'transfert'), 25001, 50000, 400
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'transfert'), 50001, 100000, 800
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'transfert'), 10001, 250000, 1500
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'transfert'), 250001, 500000, 1500
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'transfert'), 500001, 1000000, 2500
+UNION ALL SELECT (SELECT id FROM type_operations WHERE nom = 'transfert'), 1000001, 2000000, 3000;
 
 CREATE VIEW IF NOT EXISTS v_solde_clients AS
 SELECT 
@@ -97,13 +125,13 @@ SELECT
     c.telephone,
     (
         -- Total Dépôts reçus
-        COALESCE((SELECT SUM(montant) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = 1), 0)
+        COALESCE((SELECT SUM(montant) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'depot')), 0)
         -- Total Transferts reçus
-        + COALESCE((SELECT SUM(montant) FROM transactions WHERE id_destinataire = c.id AND id_type_operation = 3), 0)
-        -- Moins Total Retraits (Montant)
-        - COALESCE((SELECT SUM(montant) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = 2), 0)
+        + COALESCE((SELECT SUM(montant) FROM transactions WHERE id_destinataire = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'transfert')), 0)
+        -- Moins Total Retraits (Montant + Frais)
+        - COALESCE((SELECT SUM(montant + frais) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'retrait')), 0)
         -- Moins Total Transferts envoyés (Montant + Frais)
-        - COALESCE((SELECT SUM(montant + frais) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = 3), 0)
+        - COALESCE((SELECT SUM(montant + frais) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'transfert')), 0)
     ) AS solde
 FROM clients c;
 
