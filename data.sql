@@ -12,13 +12,15 @@ CREATE TABLE IF NOT EXISTS operateurs_partenaires (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nom VARCHAR(50) NOT NULL UNIQUE,
     est_reseau_propre BOOLEAN NOT NULL DEFAULT 0, -- 1 pour votre réseau, 0 pour un concurrent
-    commission_pourcentage REAL NOT NULL DEFAULT 0.0 -- Ex: 2.0 pour 2%
+    commission_pourcentage REAL NOT NULL DEFAULT 0.0
+    
 );
 
-INSERT INTO operateurs_partenaires (nom, est_reseau_propre, commission_pourcentage) VALUES
-('NotreRéseau', 1, 0.0),
-('Orange', 0, 5.0),  -- 5% de commission extra sur les transferts vers Orange
-('Airtel', 0, 3.0);  -- 3% de commission extra sur les transferts vers Airtel
+INSERT INTO operateurs_partenaires (nom, est_reseau_propre, commission_pourcentage,promotion) VALUES
+('NotreRéseau', 1, 0.0, 5.0),
+('Orange', 0, 5.0, 0.0),  -- 5% de commission extra sur les transferts vers Orange
+('Airtel', 0, 3.0, 0.0);
+  -- 3% de commission extra sur les transferts vers Airtel
 
 -- 2. Table prefixes modifiée : liée à un opérateur
 CREATE TABLE IF NOT EXISTS prefixes (
@@ -92,6 +94,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     id_destinataire INTEGER NULL,
     id_operateur_cible INTEGER NULL,             -- Opérateur du destinataire (si transfert)
     montant REAL NOT NULL,
+    promotion REAL NOT NULL DEFAULT 0.0,
     frais REAL NOT NULL DEFAULT 0.0,              -- Frais de base (barème)
     frais_commission REAL NOT NULL DEFAULT 0.0,   -- Frais de commission extra (si inter-opérateur)
     date_transaction DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -102,10 +105,10 @@ CREATE TABLE IF NOT EXISTS transactions (
 );
 
 -- Exemples de transactions V2 :
-INSERT INTO transactions (id_type_operation, id_expediteur, id_destinataire, id_operateur_cible, montant, frais, frais_commission) VALUES
-(1, 1, NULL, NULL, 10000, 0, 0),                        -- Dépôt 10 000
-(3, 1, 2, 3, 2000, 50, 60),                            -- Transfert vers Airtel (2000 Ar, Frais base=50, Comm 3%=60)
-(3, 1, 3, 2, 3000, 50, 150);                           -- Transfert vers Orange (3000 Ar, Frais base=50, Comm 5%=150)
+INSERT INTO transactions (id_type_operation, id_expediteur, id_destinataire, id_operateur_cible, montant, promotion, frais, frais_commission) VALUES
+(1, 1, NULL, NULL, 10000,5.0, 0, 0),                        -- Dépôt 10 000
+(3, 1, 2, 3, 2000,0.0, 50, 60),                            -- Transfert vers Airtel (2000 Ar, Frais base=50, Comm 3%=60)
+(3, 1, 3, 2, 3000,0.0, 50, 150);                           -- Transfert vers Orange (3000 Ar, Frais base=50, Comm 5%=150)
 
 
 -- A. Calcul du Solde des Clients (Tient compte de montant + frais + commission)
@@ -117,7 +120,7 @@ SELECT
         COALESCE((SELECT SUM(montant) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'depot')), 0)
         + COALESCE((SELECT SUM(montant) FROM transactions WHERE id_destinataire = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'transfert')), 0)
         - COALESCE((SELECT SUM(montant + frais + frais_commission) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'retrait')), 0)
-        - COALESCE((SELECT SUM(montant + frais + frais_commission) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'transfert')), 0)
+        - COALESCE((SELECT SUM(montant + frais + frais_commission - (frais*0.05)) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'transfert')), 0)
     ) AS solde
 FROM clients c;
 

@@ -8,7 +8,7 @@ class TransactionsModel extends Model
 {
     protected $table = 'transactions';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['id_type_operation', 'id_expediteur', 'id_destinataire', 'montant', 'frais', 'frais_retrait_prepaye', 'date_transaction'];
+    protected $allowedFields = ['id_type_operation', 'id_expediteur', 'id_destinataire','id_operateur_cible', 'montant','promotion', 'frais', 'frais_retrait_prepaye', 'date_transaction'];
     protected $operationCatalog;
 
     public function __construct()
