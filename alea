@@ -1,3 +1,9 @@
-Notion de promotion am lien de tranfert => poucentage (meme operateur)
+1.Notion de promotion am lien de tranfert => poucentage (meme operateur)
 creer une config dans base (ex : 10%)
 bonus: page fanovana promotion
+
+2.NOtion epargne :client ,interface ,page..epargne %;seulement transfert
+
+Lors du transfer(INSERT DANS EPARGNE et avoir le montat final sans l'epargne)
+
+

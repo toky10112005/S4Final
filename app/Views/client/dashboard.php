@@ -47,6 +47,7 @@
                     <label>Montant
                         <input type="number" name="amount" step="100" min="0" required>
                     </label>
+                    
                     <label style="display:flex;gap:10px;align-items:center;">
                         <input type="checkbox" name="include_withdraw_fee" value="1">
                         <span>Inclure les frais de retrait lors de l’envoi</span>

@@ -1,5 +1,6 @@
 # Répartition des tâches — Projet Mobile Money
-
+# A:4307
+# B:4200
 ## Commun (préalable)
 - Schéma de données (tables/entités) — à définir à deux
 - Repo GitHub + arborescence des dossiers

@@ -73,13 +73,23 @@ CREATE TABLE IF NOT EXISTS operateur(
 
 INSERT OR IGNORE INTO operateur (username, password) VALUES ('admin', 'admin');
 
+CREATE TABLE IF NOT EXISTS epargne(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    valeur REAL NOT NULL DEFAULT 0.0  --en %
+);
+
+
 -- 6. Clients
 CREATE TABLE IF NOT EXISTS clients (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     telephone VARCHAR(15) NOT NULL UNIQUE,
     nom VARCHAR(100) DEFAULT 'Client',
-    date_creation DATETIME DEFAULT CURRENT_TIMESTAMP
+    date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
+    id_epargne INTEGER NOT NULL,
+    FOREIGN KEY (id_epargne) REFERENCES epargne(id),
 );
+
+
 
 INSERT INTO clients (telephone, nom) VALUES
 ('0371234567', 'Client A (NotreRéseau)'),
@@ -118,6 +128,7 @@ SELECT
     c.telephone,
     (
         COALESCE((SELECT SUM(montant) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'depot')), 0)
+        -- ici Valeur - (valeur*epargne%/100)
         + COALESCE((SELECT SUM(montant) FROM transactions WHERE id_destinataire = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'transfert')), 0)
         - COALESCE((SELECT SUM(montant + frais + frais_commission) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'retrait')), 0)
         - COALESCE((SELECT SUM(montant + frais + frais_commission - (frais*0.05)) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'transfert')), 0)

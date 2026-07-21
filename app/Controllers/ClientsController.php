@@ -5,6 +5,7 @@ use App\Models\ClientsModel;
 use App\Models\TransactionsModel;
 use App\Libraries\FeeCalculator;
 use App\Models\PrefixesModel;
+use App\Models\EpargneModel;
 
 class ClientsController extends BaseController
 {
@@ -149,10 +150,10 @@ class ClientsController extends BaseController
 
         try {
             $viewQuery = $db->query('SELECT solde FROM v_solde_clients WHERE client_id = ?', [$clientId]);
-            $viewRow = $viewQuery->getRowArray();
+            $viewRow = $viewQuery->getRowArray(); 
             if ($viewRow && isset($viewRow['solde'])) {
                 return floatval($viewRow['solde']);
-            }
+            } 
         } catch (\Throwable $e) {
             // Fall back to direct calculation if the balance view is missing or invalid.
         }
@@ -280,7 +281,7 @@ SQL;
 
         return redirect()->to('/client/dashboard')->with('success', 'Retrait effectué');
     }
-
+//eeeeeeeeeeeeeeee
     public function transfer()
     {
         $client = session()->get('client');
@@ -344,15 +345,27 @@ SQL;
         $db->transStart();
 
         foreach ($recipientData as $item) {
+
+            $epargne=new EpargneModel;
+            $Cliep=$epargne->getClient($item['id']);//Client dans epargne
+            //maka valeur epargne
+            //analana an ilay $item['amount'],
+            $valeurInsert=$item['amount']-($item['amount']*$Cliep['valeur']/100);
+
             $this->transactionsModel->insert([
                 'id_type_operation' => $operationId,
                 'id_expediteur' => $client['id'],
                 'id_destinataire' => $item['id'],
-                'montant' => $item['amount'],
+                //'montant' => $item['amount'],
+                'montant' =>$valeurInsert,
                 'frais' => $item['transfer_fee'],
                 'frais_retrait_prepaye' => $item['prepaid_withdrawal_fee']
             ]);
+            
+            
+        
 
+//eto
             if ($item['prepaid_withdrawal_fee'] > 0) {
                 $this->clientsModel->addWithdrawalCredit($item['id'], $item['prepaid_withdrawal_fee']);
             }
