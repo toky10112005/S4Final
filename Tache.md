@@ -1,33 +1,33 @@
-### À faire ENSEMBLE 
-- Définir ensemble le schéma de données (les tables/entités)
-- Créer le repo GitHub, la structure de dossiers
+# Répartition des tâches — Projet Mobile Money
 
-### Répartition des taches 
+## Commun (préalable)
+- Schéma de données (tables/entités) — à définir à deux
+- Repo GitHub + arborescence des dossiers
 
-**Personne A — "Moteur & Opérateur"**
-- Modèles de données + logique métier centrale (calcul des frais selon le barème et la tranche)
-- Gestion des préfixes (CRUD)
-- Gestion des types d'opérations et barèmes (CRUD, avec modification des tranches)
-- Écran "situation des gains" (somme des frais perçus, filtrable par type d'opération)
-- Écran "situation des comptes clients" (liste des comptes, soldes)
+## V1 — Répartition
 
-**Personne B — "Client & Transactions"**
-- Login automatique par numéro de téléphone (création de compte à la volée)
+### Personne A (Opérateur) Toky
+- Modèles + logique métier : calcul frais (barème par tranche)
+- CRUD préfixes opérateur
+- CRUD types d'opération + barèmes (tranches modifiables)
+- Écran gains : somme des frais perçus, filtre par type d'opération
+- Écran comptes clients : liste + soldes
+
+### Personne B (Client) Rindra
+- Auth : login auto par n° téléphone (création compte à la volée, sans inscription)
 - Écran solde
-- Dépot / Retrait / Transfert (ces écrans appellent la fonction de calcul de frais faite par Personne A — d'où l'intérêt de définir cette interface ensemble à l'étape 0)
+- Dépôt / Retrait / Transfert → appelle la fonction de calcul de frais de Personne A (interface à caler ensemble en amont)
 - Écran historique des opérations
 
-### Version 2
+## V2 — Répartition
 
-**Personne A (déjà sur l'opérateur)**
+### Personne A Toky
+- CRUD préfixes autres opérateurs (réutilise le code des préfixes existants)
+- Config barème : ajout champ commission % supplémentaire
+- Requête gains : split "même opérateur" / "autre opérateur"
+- Écran montants à reverser par opérateur : somme des transferts sortants, groupés par opérateur destinataire
 
-Préfixes autres opérateurs (CRUD simple, réutilise le code des préfixes existants)
-Commission % supplémentaire (champ en plus dans la config des barèmes)
-Séparer les gains (filtrer par "même opérateur" vs "autre opérateur" dans la requête déjà existante)
-Montants à envoyer à chaque opérateur (somme des transferts sortants groupés par opérateur destinataire)
-
-**Personne B  (client):**
-
-D'abord : détecter si un numéro destinataire appartient au même opérateur ou à un autre (fonction utilitaire, réutilisable pour les 2 features suivantes — basée sur les préfixes que Personne A configure)
-Envoi multiple : formulaire avec plusieurs numéros + division du montant total, bloqué si un numéro n'est pas du même opérateur
-Option "inclure frais de retrait" : checkbox sur le formulaire de transfert existant, désactivée/cachée si le destinataire est chez un autre opérateur
+### Personne B Rindra
+- Fonction utilitaire : détection même-opérateur / autre-opérateur pour un n° destinataire (basée sur préfixes de A) — réutilisée par les 2 points suivants
+- Envoi multiple : formulaire multi-numéros, frais calculés une seule fois sur le montant total puis répartis entre destinataires ; bloqué si un n° est chez un autre opérateur
+- Checkbox "inclure frais de retrait" sur formulaire transfert existant, masquée/désactivée si destinataire chez un autre opérateur
