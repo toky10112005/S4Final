@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+## Version 1
+=======
+>>>>>>> origin
 **1. L'opérateur** (l'administrateur du système) — celui qui gère les règles du jeu :
 - Il définit quels préfixes téléphoniques (033, 037...) appartiennent à son réseau
 - Il définit les types d'opérations possibles (dépôt, retrait, transfert) et **combien ça coûte** selon le montant (c'est le tableau que vous avez montré : plus tu retires/transfères une grosse somme, plus les frais sont élevés, par tranche)

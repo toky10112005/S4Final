@@ -74,8 +74,7 @@ CREATE TABLE IF NOT EXISTS clients (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     telephone VARCHAR(15) NOT NULL UNIQUE,
     nom VARCHAR(100) DEFAULT 'Client',
-    date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
-    credit_retrait REAL NOT NULL DEFAULT 0.0
+    date_creation DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 INSERT INTO clients (telephone, nom) VALUES
@@ -93,7 +92,6 @@ CREATE TABLE IF NOT EXISTS transactions (
     montant REAL NOT NULL,
     frais REAL NOT NULL DEFAULT 0.0,              -- Frais de base (barème)
     frais_commission REAL NOT NULL DEFAULT 0.0,   -- Frais de commission extra (si inter-opérateur)
-    frais_retrait_prepaye REAL NOT NULL DEFAULT 0.0,
     date_transaction DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_type_operation) REFERENCES type_operations(id),
     FOREIGN KEY (id_expediteur) REFERENCES clients(id),
@@ -107,9 +105,6 @@ INSERT INTO transactions (id_type_operation, id_expediteur, id_destinataire, id_
 (3, 1, 2, 3, 2000, 50, 60),                            -- Transfert vers Airtel (2000 Ar, Frais base=50, Comm 3%=60)
 (3, 1, 3, 2, 3000, 50, 150);                           -- Transfert vers Orange (3000 Ar, Frais base=50, Comm 5%=150)
 
---------------------------------------------------------------------------------
--- 📊 VUES POUR LA VERSION 2
---------------------------------------------------------------------------------
 
 -- A. Calcul du Solde des Clients (Tient compte de montant + frais + commission)
 CREATE VIEW v_solde_clients AS
@@ -120,7 +115,7 @@ SELECT
         COALESCE((SELECT SUM(montant) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'depot')), 0)
         + COALESCE((SELECT SUM(montant) FROM transactions WHERE id_destinataire = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'transfert')), 0)
         - COALESCE((SELECT SUM(montant + frais + frais_commission) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'retrait')), 0)
-        - COALESCE((SELECT SUM(montant + frais + frais_commission + frais_retrait_prepaye) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'transfert')), 0)
+        - COALESCE((SELECT SUM(montant + frais + frais_commission) FROM transactions WHERE id_expediteur = c.id AND id_type_operation = (SELECT id FROM type_operations WHERE nom = 'transfert')), 0)
     ) AS solde
 FROM clients c;
 
