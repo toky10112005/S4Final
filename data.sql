@@ -1,5 +1,7 @@
 -- Clean up si réinitialisation
 DROP VIEW IF EXISTS situation_clients;
+DROP VIEW IF EXISTS gains_retrait;
+DROP VIEW IF EXISTS gains_transfert;
 DROP VIEW IF EXISTS v_gains_interne;
 DROP VIEW IF EXISTS v_gains_autres_operateurs;
 DROP VIEW IF EXISTS v_compensation_operateurs;
@@ -123,6 +125,21 @@ FROM clients c;
 CREATE VIEW situation_clients AS 
 SELECT c.id AS client_id, c.telephone, vsc.solde
 FROM clients c JOIN v_solde_clients vsc ON c.id = vsc.client_id;
+
+-- C. V1 EXIGENCE : Gains globaux par type d'operation
+CREATE VIEW gains_retrait AS
+SELECT
+    COALESCE(SUM(t.frais + t.frais_commission), 0) AS total_gains
+FROM transactions t
+JOIN type_operations o ON o.id = t.id_type_operation
+WHERE o.nom = 'retrait';
+
+CREATE VIEW gains_transfert AS
+SELECT
+    COALESCE(SUM(t.frais + t.frais_commission), 0) AS total_gains
+FROM transactions t
+JOIN type_operations o ON o.id = t.id_type_operation
+WHERE o.nom = 'transfert';
 
 -- C. V2 EXIGENCE : Gains Réseau Propre vs Autres Opérateurs
 CREATE VIEW v_gains_interne AS
